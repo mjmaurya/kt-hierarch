@@ -1,0 +1,16 @@
+<div ngClass="kt-hierarch-connector-{{config?.orientation}}" class="kt-hierarch-border" [ngStyle]="applyConnectorStyle()" *ngIf="hasParent"></div>
+<div class="kt-hierarch-box-{{config?.orientation}}" [ngStyle]="applyNodeStyle()">
+    <div class="kt-hierarch-content-box" (click)="onNodeClick(node)">
+        <div class="kt-hierarch-content-image" *ngIf="node?.image">
+            <img src="{{node?.image}}" width="40px" alt="Image"/>
+        </div>
+        <div class="kt-hierarch-content">
+            <div class="node-name" *ngIf="node?.title && config?.node?.titleTooltip" [title]="node?.title">{{node?.title}}</div>
+            <div class="node-name" *ngIf="node?.title && !config?.node?.titleTooltip">{{node?.title}}</div>
+            <div *ngIf="node?.subTitle" class="node-title">{{node?.subTitle}}</div>
+        </div>
+    </div>
+    <div [innerHTML]="node?.customContent" class="kt-hierarch-custom-content">
+    </div>
+</div>
+<div ngClass="kt-hierarch-connector-{{config?.orientation}}" class="kt-hierarch-border" [ngStyle]="applyConnectorStyle()" *ngIf="node?.childs?.length"></div>

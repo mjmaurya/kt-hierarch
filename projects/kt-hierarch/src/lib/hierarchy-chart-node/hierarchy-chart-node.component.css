@@ -1,0 +1,112 @@
+:host {
+    display: flex;
+    align-items: center;
+  }
+
+  .kt-hierarch-vertical {
+    flex-direction: column;
+  }
+  
+  .kt-hierarch-horizontal {
+    flex-direction: row;
+  }
+  
+  .kt-hierarch-container {
+    display: flex;
+  }
+  
+  .kt-hierarch-container-horizontal {
+    flex-direction: column;
+  }
+  
+  .kt-hierarch-container-vertical {
+    flex-direction: inherit;
+  }
+  
+  .kt-hierarch-connector {
+    flex: 1;
+  }
+  
+  .kt-hierarch-connector-container {
+    display: flex;
+  }
+  
+  .kt-hierarch-connector-container-horizontal {
+    flex-direction: column;
+  }
+  
+  .kt-hierarch-connector-container-vertical {
+    flex-direction: row;
+  }
+  
+  .kt-hierarch-reports {
+    display: flex;
+    flex: 1;
+  }
+  
+  .kt-hierarch-reports-horizontal {
+    flex-direction: column;
+  }
+  
+  .kt-hierarch-reports-vertical {
+    flex-direction: row;
+  }
+  
+  .kt-hierarch-content-box{
+    display: flex;
+    column-gap: 8px;
+    cursor: pointer;
+  }
+  .kt-hierarch-content{
+    display: flex;
+    flex-direction: column;
+    row-gap: 4px;
+  }
+  
+  .kt-hierarch-border {
+    width: 1em;
+    height: 0em !important;
+    border: 1px solid #d2d1d1;
+  }
+  
+.kt-hierarch-connector-vertical{
+    height: 1.2em !important;
+    width: 0em !important;
+  }
+  .kt-hierarch-box-horizontal {
+    display: flex;
+    width: 14em;
+    flex-direction: column;    
+    margin: 0.6em 0em;
+    border: 1px solid #E8E8E8;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 1em;
+    }
+    .kt-hierarch-box-vertical{
+      display: flex;
+      width: 14em;
+      flex-direction: column;
+      margin: 0em 0.6em;
+      border: 1px solid #E8E8E8;;
+      padding: 0.6em;
+      background-color: #fff;
+      border-radius: 1em;
+      }
+  
+  .kt-hierarch-self-vertical {
+    margin-bottom: 2%;
+  }
+  
+  .node-name {
+    color: black;
+    width: 100%;
+    font-weight: 600;
+  }
+
+.node-title {
+    color: black;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  

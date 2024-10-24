@@ -1,0 +1,77 @@
+.horizontal{
+    display: flex !important;
+    align-items: center;
+    flex-direction: row;
+    flex: 1;
+  }
+.vertical{
+    display: flex;
+    align-items: center;
+    flex-direction: column !important;
+    flex: 1;
+}
+  
+.kt-hierarch-vertical-noarrow {
+    flex-direction: column;
+  }
+  
+  .kt-hierarch-vertical {
+    flex-direction: column;
+  }
+  
+  /* .kt-hierarch-vertical::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    border-top: 5px solid #410074;
+    transform: translateY(250%);
+  }
+  
+  .kt-hierarch-horizontal::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 5px solid #410074;
+    transform: translateX(150%);
+  } */
+  
+  .kt-hierarch-container {
+    display: flex;
+  }
+  
+  .kt-hierarch-container-vertical {
+    flex-direction: column;
+  }
+  
+  .kt-hierarch-connector {
+    flex: 1;
+  }
+  
+  .kt-hierarch-connector-container {
+    display: flex;
+  }
+  
+  .kt-hierarch-connector-container-horizontal {
+    flex-direction: column;
+  }
+  
+  .kt-hierarch-reports {
+    display: flex;
+    flex: 1;
+  }
+  
+  .kt-hierarch-reports-horizontal {
+    flex-direction: column;
+  }
+  
+
+  .kt-hierarch-border {
+    border: 0.06em solid ;
+  }
+  

@@ -1,0 +1,28 @@
+<div ngClass="{{config?.orientation}}">
+    <kt-hierarchy-chart-node (nodeClick)="onNodeClick($event)" *ngIf="node" [ngClass]="{'kt-hierarch-vertical': hasParent && config?.orientation==='vertical',
+                  'kt-hierarch-vertical-noarrow': !hasParent && config?.orientation==='vertical',
+                  'kt-hierarch-horizontal': hasParent && config?.orientation==='horizontal',
+                  'kt-hierarch-horizontal-noarrow': !hasParent && config?.orientation==='horizontal'}" [node]="node"
+        [hasParent]="hasParent" [config]="config">
+    </kt-hierarchy-chart-node>
+
+    <div *ngIf="node?.childs?.length" ngClass="kt-hierarch-reports-{{config?.orientation}}" class="kt-hierarch-reports">
+        <ng-container *ngFor="let childNode of node?.childs; first as isFirst; last as isLast">
+            <div ngClass="kt-hierarch-container-{{config?.orientation}}" class="kt-hierarch-container">
+                <div ngClass="kt-hierarch-connector-container-{{config?.orientation}}"
+                    class="kt-hierarch-connector-container">
+                    <div class="kt-hierarch-connector kt-hierarch-border"
+                        [ngStyle]="!isFirst ? applyConnectorStyle() : null"
+                        [style.border-color]="isFirst?'transparent':''"></div>
+                    <div class="kt-hierarch-border" [ngStyle]="applyConnectorStyle(true)"></div>
+                    <div class="kt-hierarch-connector kt-hierarch-border"
+                        [ngStyle]="!isLast ? applyConnectorStyle() : null"
+                        [style.border-color]="isLast?'transparent':''"></div>
+                </div>
+                <kt-hierarchy-chart-renderer [node]="childNode" [hasParent]="true" (nodeClick)="onNodeClick($event)"
+                    [config]="config">
+                </kt-hierarchy-chart-renderer>
+            </div>
+        </ng-container>
+    </div>
+</div>
