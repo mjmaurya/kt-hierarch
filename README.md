@@ -1,4 +1,4 @@
-# kt-hierarch Angular Module Documentation
+# kt-hierarch
 
 ## Overview
 
