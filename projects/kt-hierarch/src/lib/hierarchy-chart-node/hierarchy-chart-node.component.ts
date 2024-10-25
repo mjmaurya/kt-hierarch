@@ -18,7 +18,6 @@ export class HierarchyChartNodeComponent implements OnInit {
   }
 applyNodeStyle(){
   let style = { 'backgroundColor': this.config?.node.backgroundColor, 'borderWidth': this.config?.node.borderWidth, 'borderColor': this.config?.node.borderColor, 'borderStyle': this.config?.node.borderStyle }
-  console.table(style)
   return style
 }
 

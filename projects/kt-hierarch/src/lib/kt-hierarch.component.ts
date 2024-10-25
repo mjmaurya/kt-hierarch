@@ -49,7 +49,6 @@ export class KtHierarchComponent implements OnInit {
     this.configData = {...this.configData,...this.config};
   }
   onNodeClick(value: any): void {
-    console.log('onNodeClick', value);
     this.nodeClick.emit(value);
   }
   zoomIn() {
