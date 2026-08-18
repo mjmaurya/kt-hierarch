@@ -21,6 +21,23 @@ applyNodeStyle(){
   return style
 }
 
+applyAvatarStyle(){
+  let avatar = this.config?.avatar;
+  let style = {
+    'width': avatar?.width,
+    'height': avatar?.height,
+    'backgroundColor': avatar?.backgroundColor,
+    'borderWidth': avatar?.borderWidth,
+    'borderStyle': avatar?.borderStyle,
+    'borderColor': avatar?.borderColor,
+    'borderRadius': avatar?.borderRadius,
+    'padding': avatar?.padding,
+    'objectFit': avatar?.objectFit,
+    'boxShadow': avatar?.boxShadow
+  }
+  return style
+}
+
 applyConnectorStyle(){
   let style = {
     borderWidth: this.config?.connector.borderWidth,

@@ -52,6 +52,35 @@ export class AppModule { }
 
 
 
+## Playground
+
+The demo app in this repo is an interactive playground — build a hierarchy, swap avatar
+images, tune every style option, and copy the resulting `config`/`data` JSON straight into
+your own app:
+
+```bash
+npm install
+npx ng build kt-hierarch          # the demo consumes dist/, so build the library first
+npx ng serve kt-hierarch-demo     # http://localhost:4200
+```
+
+While developing the library itself, run the two halves in separate terminals so lib edits
+reach the demo automatically:
+
+```bash
+npx ng build kt-hierarch --watch --configuration development   # rebuilds dist/ on every change
+npx ng serve kt-hierarch-demo                                  # reloads whenever dist/ changes
+```
+
+> **Node 17+**: webpack hashes with md4, which OpenSSL 3 rejects, so every build above needs
+> `NODE_OPTIONS=--openssl-legacy-provider` prefixed — e.g.
+> `NODE_OPTIONS=--openssl-legacy-provider npx ng serve kt-hierarch-demo`.
+
+> **After `npm install`**: the workspace lists `kt-hierarch` as a dependency, so the published
+> package lands in `node_modules` and acts as a fallback for the `kt-hierarch` import. Always
+> build the library before serving the demo — otherwise, with `dist/` missing, the demo
+> silently compiles against the published version instead of your local source.
+
 ## Usage
 
 ### Component Setup
@@ -82,6 +111,22 @@ To use the hierarchy component, add the following in your template:
     - `borderWidth`: Width of the node border (e.g., `'1px'`).
     - `borderStyle`: Style of the node border (e.g., `'solid'`).
     - `borderColor`: Color of the node border (e.g., `'#E8E8E8'`).
+    - `titleColor`: Color of the title text (e.g., `'#000000'`). Set this when using a dark node background.
+    - `subTitleColor`: Color of the subtitle text (e.g., `'#000000'`).
+    - `titleTooltip`: When `true`, the full title is shown as a native tooltip on hover.
+  - `avatar`: Styles for the node image (avatar).
+    - `width`: Width of the avatar (e.g., `'40px'`).
+    - `height`: Height of the avatar (e.g., `'40px'`).
+    - `backgroundColor`: Background color behind the avatar (e.g., `'#ffffff'`).
+    - `borderWidth`: Width of the avatar border (e.g., `'2px'`).
+    - `borderStyle`: Style of the avatar border (e.g., `'solid'`).
+    - `borderColor`: Color of the avatar border (e.g., `'#ffffff'`).
+    - `borderRadius`: Corner radius of the avatar (e.g., `'8px'`, or `'50%'` for a circle).
+    - `padding`: Space between the border and the image (e.g., `'2px'`).
+    - `objectFit`: How the image fills the box (e.g., `'cover'`, `'contain'`).
+    - `boxShadow`: Shadow around the avatar (e.g., `'0 2px 6px rgba(0,0,0,.2)'`).
+
+    > Sizing uses `box-sizing: border-box`, so `width`/`height` include the border and padding.
 
 ### Output Properties
 
@@ -145,6 +190,20 @@ export class HierarchyExampleComponent {
       borderWidth: '1px',
       borderStyle: 'solid',
       borderColor: '#E8E8E8',
+      titleColor: '#000000',
+      subTitleColor: '#000000',
+    },
+    avatar: {
+      width: '40px',
+      height: '40px',
+      backgroundColor: '#ffffff',
+      borderWidth: '2px',
+      borderStyle: 'solid',
+      borderColor: '#ffffff',
+      borderRadius: '8px',
+      padding: '2px',
+      objectFit: 'cover',
+      boxShadow: 'none',
     }
   };
 
@@ -166,7 +225,7 @@ export class HierarchyExampleComponent {
 
 - **Inputs:**
   - `data: any[]`: The hierarchical data to display.
-  - `config: { orientation: string; connector: { borderWidth: string; borderStyle: string; borderColor: string; }; node: { backgroundColor: string; borderWidth: string; borderStyle: string; borderColor: string; }; }`: Configuration settings for the hierarchy display.
+  - `config: { orientation: string; connector: { borderWidth: string; borderStyle: string; borderColor: string; }; node: { backgroundColor: string; borderWidth: string; borderStyle: string; borderColor: string; titleColor: string; subTitleColor: string; }; avatar: { width: string; height: string; backgroundColor: string; borderWidth: string; borderStyle: string; borderColor: string; borderRadius: string; padding: string; objectFit: string; boxShadow: string; }; }`: Configuration settings for the hierarchy display. Any section can be partially specified — unspecified keys fall back to the defaults.
 
 - **Outputs:**
   - `nodeClick: EventEmitter<any>`: Emits the selected node.

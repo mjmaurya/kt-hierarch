@@ -1,3 +1,207 @@
-<div style="width: 100%;margin-top: 100px;">
-  <kt-hierarch [data] ="data" [config]="config"></kt-hierarch>
+<div class="playground">
+  <aside class="panel">
+    <h1>kt-hierarch playground</h1>
+
+    <!-- ---------- hierarchy ---------- -->
+    <section>
+      <h2>Hierarchy</h2>
+      <p class="hint">Click any node in the chart to select it, then edit it here.</p>
+
+      <div *ngIf="!selected" class="empty">
+        No node selected.
+        <button type="button" class="link" (click)="addChild(data)">Add a child to the root</button>
+      </div>
+
+      <div *ngIf="selected" class="stack">
+        <label>
+          Title
+          <input type="text" [(ngModel)]="selected.title" [class.invalid]="titleError" />
+        </label>
+        <p class="error" *ngIf="titleError">{{ titleError }}</p>
+
+        <label>
+          Subtitle
+          <input type="text" [(ngModel)]="selected.subTitle" />
+        </label>
+
+        <div class="row">
+          <button type="button" (click)="addChild(selected)">+ Child</button>
+          <button type="button" (click)="addSibling(selected)" [disabled]="isRoot(selected)">+ Sibling</button>
+          <button type="button" class="danger" (click)="deleteNode(selected)" [disabled]="isRoot(selected)">
+            Delete
+          </button>
+        </div>
+        <p class="hint" *ngIf="isRoot(selected)">This is the root — it cannot be deleted or given a sibling.</p>
+        <p class="hint" *ngIf="!isRoot(selected) && childCount(selected)">
+          Deleting removes its {{ childCount(selected) }} descendant branch(es) too.
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------- avatar image ---------- -->
+    <section>
+      <h2>Avatar image</h2>
+      <div class="stack" [class.disabled]="!selected">
+        <label>
+          Image URL
+          <input
+            type="text"
+            placeholder="https://… or data:image/…"
+            [disabled]="!selected"
+            [ngModel]="selected?.image"
+            (ngModelChange)="onImageUrlChange($event)" />
+        </label>
+
+        <label class="file">
+          Or upload a photo
+          <input type="file" accept="image/*" [disabled]="!selected" (change)="onImageFile($event)" />
+        </label>
+
+        <p class="status" [ngClass]="imageStatus">
+          <ng-container [ngSwitch]="imageStatus">
+            <span *ngSwitchCase="'empty'">No image — the node renders without an avatar.</span>
+            <span *ngSwitchCase="'checking'">Checking image…</span>
+            <span *ngSwitchCase="'ok'">Image loaded.</span>
+            <span *ngSwitchDefault>{{ imageError }}</span>
+          </ng-container>
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------- avatar style ---------- -->
+    <section>
+      <h2>Avatar style</h2>
+      <div class="row presets">
+        <button type="button" (click)="applyPreset('square')">Square</button>
+        <button type="button" (click)="applyPreset('rounded')">Rounded</button>
+        <button type="button" (click)="applyPreset('circle')">Circle</button>
+      </div>
+
+      <label class="slider">
+        Size <span class="value">{{ avatar.size }}px</span>
+        <input type="range" min="24" max="96" step="2" [(ngModel)]="avatar.size" />
+      </label>
+
+      <label class="slider">
+        Border width <span class="value">{{ avatar.borderWidth }}px</span>
+        <input type="range" min="0" max="10" [(ngModel)]="avatar.borderWidth" />
+      </label>
+
+      <label>
+        Border style
+        <select [(ngModel)]="avatar.borderStyle">
+          <option value="none">none</option>
+          <option value="solid">solid</option>
+          <option value="dashed">dashed</option>
+          <option value="dotted">dotted</option>
+          <option value="double">double</option>
+        </select>
+      </label>
+
+      <label class="slider">
+        Border radius <span class="value">{{ avatar.borderRadius }}{{ avatar.borderRadiusUnit }}</span>
+        <input type="range" min="0" [max]="avatar.borderRadiusUnit === '%' ? 50 : 48" [(ngModel)]="avatar.borderRadius" />
+      </label>
+
+      <label>
+        Radius unit
+        <select [(ngModel)]="avatar.borderRadiusUnit">
+          <option value="px">px</option>
+          <option value="%">%</option>
+        </select>
+      </label>
+
+      <label class="slider">
+        Padding <span class="value">{{ avatar.padding }}px</span>
+        <input type="range" min="0" max="12" [(ngModel)]="avatar.padding" />
+      </label>
+
+      <div class="row">
+        <label class="color">
+          Border <input type="color" [(ngModel)]="avatar.borderColor" />
+        </label>
+        <label class="color">
+          Background <input type="color" [(ngModel)]="avatar.backgroundColor" />
+        </label>
+      </div>
+
+      <label>
+        Object fit
+        <select [(ngModel)]="avatar.objectFit">
+          <option value="cover">cover</option>
+          <option value="contain">contain</option>
+          <option value="fill">fill</option>
+          <option value="none">none</option>
+        </select>
+      </label>
+
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="avatar.shadow" /> Drop shadow
+      </label>
+
+      <p class="error" *ngIf="avatarWarning">{{ avatarWarning }}</p>
+    </section>
+
+    <!-- ---------- node + connector ---------- -->
+    <section>
+      <h2>Node &amp; connector</h2>
+      <label>
+        Orientation
+        <select [(ngModel)]="orientation">
+          <option value="vertical">vertical</option>
+          <option value="horizontal">horizontal</option>
+        </select>
+      </label>
+
+      <div class="row">
+        <label class="color">
+          Node bg <input type="color" [(ngModel)]="nodeStyle.backgroundColor" />
+        </label>
+        <label class="color">
+          Node border <input type="color" [(ngModel)]="nodeStyle.borderColor" />
+        </label>
+        <label class="color">
+          Connector <input type="color" [(ngModel)]="connector.borderColor" />
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="color">
+          Title text <input type="color" [(ngModel)]="nodeStyle.titleColor" />
+        </label>
+        <label class="color">
+          Subtitle text <input type="color" [(ngModel)]="nodeStyle.subTitleColor" />
+        </label>
+      </div>
+
+      <label class="slider">
+        Connector width <span class="value">{{ connector.borderWidth }}px</span>
+        <input type="range" min="1" max="6" [(ngModel)]="connector.borderWidth" />
+      </label>
+
+      <label>
+        Connector style
+        <select [(ngModel)]="connector.borderStyle">
+          <option value="solid">solid</option>
+          <option value="dashed">dashed</option>
+          <option value="dotted">dotted</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- ---------- export ---------- -->
+    <section>
+      <h2>
+        Export
+        <span class="badge" [class.bad]="!isValid">{{ isValid ? 'valid' : 'check errors' }}</span>
+      </h2>
+      <p class="hint">Paste this straight into your app as <code>[config]</code> and <code>[data]</code>.</p>
+      <textarea readonly rows="10">{{ exported }}</textarea>
+      <button type="button" (click)="copyExport()">{{ copied ? 'Copied' : 'Copy JSON' }}</button>
+    </section>
+  </aside>
+
+  <main class="stage">
+    <kt-hierarch [data]="data" [config]="config" (nodeClick)="onNodeClick($event)"></kt-hierarch>
+  </main>
 </div>

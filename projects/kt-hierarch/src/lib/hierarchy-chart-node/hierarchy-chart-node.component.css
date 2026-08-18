@@ -57,6 +57,17 @@
     column-gap: 8px;
     cursor: pointer;
   }
+  .kt-hierarch-content-image{
+    display: flex;
+    align-items: center;
+  }
+
+  .kt-hierarch-content-image img{
+    display: block;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+
   .kt-hierarch-content{
     display: flex;
     flex-direction: column;

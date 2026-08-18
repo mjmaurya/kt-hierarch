@@ -12,12 +12,10 @@
                 <div ngClass="kt-hierarch-connector-container-{{config?.orientation}}"
                     class="kt-hierarch-connector-container">
                     <div class="kt-hierarch-connector kt-hierarch-border"
-                        [ngStyle]="!isFirst ? applyConnectorStyle() : null"
-                        [style.border-color]="isFirst?'transparent':''"></div>
-                    <div class="kt-hierarch-border" [ngStyle]="applyConnectorStyle(true)"></div>
+                        [ngStyle]="applyConnectorStyle(isFirst)"></div>
+                    <div class="kt-hierarch-border" [ngStyle]="applyConnectorStyle()"></div>
                     <div class="kt-hierarch-connector kt-hierarch-border"
-                        [ngStyle]="!isLast ? applyConnectorStyle() : null"
-                        [style.border-color]="isLast?'transparent':''"></div>
+                        [ngStyle]="applyConnectorStyle(isLast)"></div>
                 </div>
                 <kt-hierarchy-chart-renderer [node]="childNode" [hasParent]="true" (nodeClick)="onNodeClick($event)"
                     [config]="config">

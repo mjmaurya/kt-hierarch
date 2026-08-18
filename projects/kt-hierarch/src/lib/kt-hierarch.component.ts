@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { configData } from './default.model';
 
 @Component({
@@ -30,7 +30,7 @@ import { configData } from './default.model';
   }`
   ]
 })
-export class KtHierarchComponent implements OnInit {
+export class KtHierarchComponent implements OnInit, OnChanges {
 
   @ViewChild('zoomContainer') zoomContainer!: ElementRef;
   scale = 1;
@@ -46,7 +46,26 @@ export class KtHierarchComponent implements OnInit {
   ) { }
  configData:any = configData
   ngOnInit(): void {
-    this.configData = {...this.configData,...this.config};
+    this.configData = this.mergeConfig(configData, this.config);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['config']) {
+      this.configData = this.mergeConfig(configData, this.config);
+    }
+  }
+
+  private mergeConfig(base: any, override: any): any {
+    const merged = { ...base };
+    if (!override) {
+      return merged;
+    }
+    Object.keys(override).forEach((key) => {
+      const value = override[key];
+      const isPlainObject = value && typeof value === 'object' && !Array.isArray(value);
+      merged[key] = isPlainObject ? { ...(base ? base[key] : {}), ...value } : value;
+    });
+    return merged;
   }
   onNodeClick(value: any): void {
     this.nodeClick.emit(value);
