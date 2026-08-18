@@ -18,5 +18,20 @@ export const configData = {
       borderWidth:'1px',
       borderStyle: 'solid',
       borderColor: '#E8E8E8',
+      titleTooltip: false,
+      titleColor: '#000000',
+      subTitleColor: '#000000',
+    },
+    avatar:{
+      width: '40px',
+      height: '40px',
+      backgroundColor: 'transparent',
+      borderWidth: '0px',
+      borderStyle: 'solid',
+      borderColor: 'transparent',
+      borderRadius: '0px',
+      padding: '0px',
+      objectFit: 'cover',
+      boxShadow: 'none',
     }
   }
