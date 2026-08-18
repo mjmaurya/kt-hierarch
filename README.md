@@ -4,6 +4,8 @@
 
 `kt-hierarch` is an Angular module designed to create and manage hierarchical structures in your Angular applications. It provides a flexible way to display and manipulate hierarchical data, making it ideal for applications that require tree views or nested structures.
 
+🔗 **[Live Playground / Demo](https://mjmaurya.github.io/kt-hierarch/)**
+
 ### Minimum Angular Version
 
 - **Angular 12**
