@@ -1,0 +1,186 @@
+// Neutral defaults only. Per-node / per-edge looks come from the config (`style`).
+// The defaults are var() fallbacks, so these variables can be set on the element or any
+// ancestor to restyle them globally:
+//   kt-dependency-graph { --kt-dependency-graph-node-bg: #111827; --kt-dependency-graph-edge-color: #60a5fa; }
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: var(--kt-dependency-graph-font, Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif);
+  color: var(--kt-dependency-graph-text, #1f2328);
+}
+
+/* ---------- Canvas ---------- */
+
+// Takes the space the legend leaves; with no host height it grows to fit the graph.
+.kdg-viewport {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+}
+
+.kdg-scroll {
+  overflow: auto;
+  max-width: 100%;
+}
+
+.kdg-canvas {
+  position: relative;
+
+  &.is-measuring {
+    visibility: hidden;
+  }
+}
+
+.kdg-edges {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.kdg-edge {
+  fill: none;
+  stroke: var(--kt-dependency-graph-edge-color, #98a2b3);
+  stroke-width: 1.6;
+  transition: opacity 0.15s ease;
+
+  &.is-dim {
+    opacity: 0.12;
+  }
+}
+
+.kdg-arrow {
+  fill: var(--kt-dependency-graph-edge-color, #98a2b3);
+}
+
+/* ---------- Nodes ---------- */
+
+.kdg-node {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-height: 40px;
+  padding: 7px 12px;
+  background: var(--kt-dependency-graph-node-bg, #ffffff);
+  border: 1px solid var(--kt-dependency-graph-node-border, #d0d5dd);
+  border-radius: var(--kt-dependency-graph-node-radius, 6px);
+  transition: opacity 0.15s ease;
+
+  &.is-interactive {
+    cursor: pointer;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--kt-dependency-graph-focus, #3a6ee6);
+    outline-offset: 3px;
+  }
+  &.is-dim {
+    opacity: 0.35;
+  }
+  // Outline, not border, so it never fights a consumer's border style.
+  &.is-selected {
+    outline: 3px solid var(--kt-dependency-graph-selected, #111827);
+    outline-offset: 1px;
+  }
+}
+
+.kdg-node__title,
+.kdg-node__subtitle {
+  display: block;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.kdg-node__title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kdg-node__subtitle {
+  font-size: 11.5px;
+  color: var(--kt-dependency-graph-text-muted, #5b616b);
+}
+
+.kdg-node__html {
+  min-width: 0;
+  margin-top: 4px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Badge ---------- */
+
+.kdg-badge {
+  position: absolute;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 14px;
+  white-space: nowrap;
+  border: 0 solid transparent; // so a style with only borderWidth/borderColor shows a border
+  border-radius: 999px;
+  color: var(--kt-dependency-graph-badge-text, #ffffff);
+  background: var(--kt-dependency-graph-badge-bg, #2f55d4);
+  pointer-events: none;
+}
+
+.kdg-badge--top-left {
+  top: 4px;
+  left: 4px;
+}
+.kdg-badge--top-right {
+  top: 4px;
+  right: 4px;
+}
+.kdg-badge--bottom-left {
+  bottom: 4px;
+  left: 4px;
+}
+.kdg-badge--bottom-right {
+  bottom: 4px;
+  right: 4px;
+}
+
+/* ---------- Legend ---------- */
+
+.kdg-legend {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 16px 0 0;
+  padding: 0 4px;
+  list-style: none;
+  font-size: 12.5px;
+  color: var(--kt-dependency-graph-text-muted, #5b616b);
+}
+
+.kdg-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.kdg-swatch {
+  flex: none;
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--kt-dependency-graph-node-border, #d0d5dd);
+  border-radius: 3px;
+  background: var(--kt-dependency-graph-node-bg, #ffffff);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kdg-edge,
+  .kdg-node {
+    transition: none;
+  }
+}

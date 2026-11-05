@@ -3,6 +3,7 @@ import { KtHierarchComponent } from './kt-hierarch.component';
 import { HierarchyChartRendererComponent } from './hierarchy-chart-renderer/hierarchy-chart-renderer.component';
 import { HierarchyChartNodeComponent } from './hierarchy-chart-node/hierarchy-chart-node.component';
 import { CommonModule } from '@angular/common';
+import { KtZoomPanModule } from './kt-zoom-pan/kt-zoom-pan.module';
 
 
 
@@ -13,7 +14,8 @@ import { CommonModule } from '@angular/common';
     HierarchyChartNodeComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    KtZoomPanModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [

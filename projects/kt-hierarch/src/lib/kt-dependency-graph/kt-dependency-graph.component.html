@@ -1,0 +1,114 @@
+<kt-zoom-pan
+  class="kdg-viewport"
+  [disabled]="!zoomable"
+  [minZoom]="minZoom"
+  [maxZoom]="maxZoom"
+  [showControls]="zoomControls"
+>
+  <div class="kdg-scroll">
+    <!-- hidden until node heights are measured, so the first (estimated) layout never flashes -->
+    <div
+      class="kdg-canvas"
+      [class.is-measuring]="!measured"
+      [style.width.px]="model.width"
+      [style.height.px]="model.height"
+    >
+      <svg
+        class="kdg-edges"
+        [attr.width]="model.width"
+        [attr.height]="model.height"
+        [attr.viewBox]="'0 0 ' + model.width + ' ' + model.height"
+        aria-hidden="true"
+      >
+        <defs>
+          <svg:marker
+            [attr.id]="markerId(null)"
+            viewBox="0 0 10 10"
+            refX="10"
+            refY="5"
+            markerWidth="10"
+            markerHeight="10"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+          >
+            <svg:path d="M0,0 L10,5 L0,10 Z" class="kdg-arrow" />
+          </svg:marker>
+          <svg:marker
+            *ngFor="let color of model.edgeColors"
+            [attr.id]="markerId(color)"
+            viewBox="0 0 10 10"
+            refX="10"
+            refY="5"
+            markerWidth="10"
+            markerHeight="10"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+          >
+            <svg:path d="M0,0 L10,5 L0,10 Z" [attr.fill]="color" />
+          </svg:marker>
+        </defs>
+
+        <svg:path
+          *ngFor="let e of model.edges; trackBy: trackById"
+          [attr.d]="e.path"
+          [attr.class]="edgeClass(e)"
+          [attr.marker-end]="'url(#' + markerId(e.color) + ')'"
+          [style.stroke]="e.color"
+          [style.stroke-width.px]="e.width"
+          [style.stroke-dasharray]="e.dashArray"
+        />
+      </svg>
+
+      <div
+        #nodeEl
+        *ngFor="let n of model.nodes; trackBy: trackById"
+        [attr.data-id]="n.id"
+        [class]="nodeClass(n)"
+        [ngStyle]="n.css.box"
+        [style.left.px]="n.x"
+        [style.top.px]="n.y"
+        [style.width.px]="n.width"
+        [attr.title]="n.tooltip || null"
+        [attr.aria-label]="n.tooltip || null"
+        [attr.aria-pressed]="selectionMode === 'none' ? null : isSelected(n.id)"
+        [attr.role]="selectionMode === 'none' ? null : 'button'"
+        [attr.tabindex]="selectionMode === 'none' ? null : 0"
+        (click)="onNodeClick(n)"
+        (keydown.enter)="onKey($event, n)"
+        (keydown.space)="onKey($event, n)"
+        (mouseenter)="setHovered(n.id)"
+        (mouseleave)="setHovered(null)"
+        (focus)="setHovered(n.id)"
+        (blur)="setHovered(null)"
+      >
+        <ng-container *ngIf="nodeTemplate as tpl; else defaultNode">
+          <ng-container
+            [ngTemplateOutlet]="tpl"
+            [ngTemplateOutletContext]="{ $implicit: n, selected: isSelected(n.id) }"
+          ></ng-container>
+        </ng-container>
+        <ng-template #defaultNode>
+          <span class="kdg-node__title" [ngStyle]="n.css.title">{{ n.title }}</span>
+          <span *ngIf="n.subTitle" class="kdg-node__subtitle" [ngStyle]="n.css.subTitle">{{ n.subTitle }}</span>
+          <div *ngIf="n.customHtml" class="kdg-node__html" [ngStyle]="n.css.customHtml" [innerHTML]="n.customHtml"></div>
+        </ng-template>
+
+        <span
+          *ngIf="n.badge"
+          class="kdg-badge kdg-badge--{{ n.badge.position || 'top-right' }}"
+          [ngStyle]="n.css.badge"
+          >{{ n.badge.text }}</span
+        >
+      </div>
+    </div>
+  </div>
+</kt-zoom-pan>
+
+<ul *ngIf="model.legend.length" class="kdg-legend">
+  <li *ngFor="let item of model.legend" class="kdg-legend__item">
+    <span class="kdg-swatch" [ngStyle]="item.css"></span>
+    {{ item.label }}
+  </li>
+</ul>
+
+<ng-content></ng-content>
