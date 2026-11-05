@@ -1,0 +1,4 @@
+.stage {
+  background: #2563eb;
+  background-image: radial-gradient(circle at 20% 10%, #3b82f6 0%, #2563eb 55%);
+}

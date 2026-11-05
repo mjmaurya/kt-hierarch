@@ -1,0 +1,66 @@
+.stage {
+  background: #ffffff;
+  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* legend sits under the zoomable area, so keep it clear of the stage edge */
+.stage kt-dependency-graph {
+  padding-bottom: 16px;
+  box-sizing: border-box;
+}
+
+input[type='number'] {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 13px;
+  color: #0f172a;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+input:disabled {
+  opacity: .5;
+}
+
+.node-id {
+  font-size: 12px;
+  margin: 0 0 8px;
+  color: #475569;
+}
+
+.chip {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+}
+
+.text-grid {
+  display: grid;
+  grid-template-columns: 1fr 64px 64px;
+  gap: 6px 8px;
+  align-items: center;
+  font-size: 12px;
+  color: #475569;
+}
+
+.text-grid .hint {
+  margin: 0;
+}
+
+.text-grid input[type='color'] {
+  width: 100%;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.text-grid input[type='number'] {
+  margin-top: 0;
+}

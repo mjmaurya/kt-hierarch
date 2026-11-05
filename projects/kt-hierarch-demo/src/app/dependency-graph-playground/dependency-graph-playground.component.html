@@ -1,0 +1,214 @@
+<div class="playground">
+  <aside class="panel">
+    <h1>Dependency graph playground</h1>
+
+    <!-- ---------- data ---------- -->
+    <section>
+      <h2>Data</h2>
+      <p class="hint">
+        Text, colours and badges all come from the node data — the component only lays them out.
+        Click a node to edit it.
+      </p>
+      <button type="button" (click)="reset()">Reset sample</button>
+    </section>
+
+    <!-- ---------- content ---------- -->
+    <section>
+      <h2>Node content</h2>
+
+      <div *ngIf="!active" class="empty">No node selected.</div>
+
+      <div *ngIf="active" class="stack">
+        <p class="node-id"><code>{{ active.id }}</code></p>
+        <label>
+          Title
+          <input type="text" [(ngModel)]="active.title" (ngModelChange)="rebuild()" />
+        </label>
+        <label>
+          Sub-title
+          <input type="text" [(ngModel)]="active.subTitle" (ngModelChange)="rebuild()" />
+        </label>
+        <label>
+          Custom HTML — extra content below the sub-title
+          <textarea
+            rows="3"
+            placeholder="<small>Last reading <b>2 min</b> ago</small>"
+            [ngModel]="customHtmlText"
+            (ngModelChange)="setCustomHtml($event)"
+          ></textarea>
+        </label>
+        <p class="hint">Angular strips <code>style</code> attributes from HTML; use a SafeHtml for inline styles.</p>
+      </div>
+    </section>
+
+    <!-- ---------- badge ---------- -->
+    <section *ngIf="active">
+      <h2>Badge</h2>
+      <label>
+        Text — empty removes the badge
+        <input type="text" placeholder="e.g. NEW" [ngModel]="active.badge?.text" (ngModelChange)="setBadgeText($event)" />
+      </label>
+      <div class="stack" [class.disabled]="!active.badge">
+        <label>
+          Position
+          <select
+            [disabled]="!active.badge"
+            [ngModel]="active.badge?.position || 'top-right'"
+            (ngModelChange)="setBadgePosition($event)"
+          >
+            <option *ngFor="let p of badgePositions" [value]="p">{{ p }}</option>
+          </select>
+        </label>
+        <div class="row">
+          <label class="color">
+            Background
+            <input
+              type="color"
+              [disabled]="!active.badge"
+              [ngModel]="badgeStyleValue('backgroundColor', '#2f55d4')"
+              (ngModelChange)="setBadgeStyle('backgroundColor', $event)" />
+          </label>
+          <label class="color">
+            Text
+            <input
+              type="color"
+              [disabled]="!active.badge"
+              [ngModel]="badgeStyleValue('color', '#ffffff')"
+              (ngModelChange)="setBadgeStyle('color', $event)" />
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- node style ---------- -->
+    <section *ngIf="active">
+      <h2>Node style</h2>
+      <div class="row">
+        <label class="color">
+          Background
+          <input type="color" [ngModel]="boxValue('backgroundColor', '#ffffff')" (ngModelChange)="setBox('backgroundColor', $event)" />
+        </label>
+        <label class="color">
+          Border
+          <input type="color" [ngModel]="boxValue('borderColor', '#d0d5dd')" (ngModelChange)="setBox('borderColor', $event)" />
+        </label>
+      </div>
+      <label>
+        Border style
+        <select [ngModel]="boxValue('borderStyle', 'solid')" (ngModelChange)="setBox('borderStyle', $event)">
+          <option value="solid">solid</option>
+          <option value="dashed">dashed</option>
+          <option value="dotted">dotted</option>
+          <option value="double">double</option>
+          <option value="none">none</option>
+        </select>
+      </label>
+      <label class="slider">
+        Border width <span class="value">{{ boxValue('borderWidth', 1) }}px</span>
+        <input type="range" min="0" max="6" step="0.5" [ngModel]="boxValue('borderWidth', 1)" (ngModelChange)="setBox('borderWidth', +$event)" />
+      </label>
+      <label class="slider">
+        Corner radius <span class="value">{{ radius }}px</span>
+        <input type="range" min="0" max="30" [ngModel]="radius" (ngModelChange)="setBox('borderRadius', +$event)" />
+      </label>
+      <label>
+        Text align
+        <select [ngModel]="boxValue('textAlign', 'left')" (ngModelChange)="setBox('textAlign', $event)">
+          <option value="left">left</option>
+          <option value="center">center</option>
+          <option value="right">right</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- ---------- text style ---------- -->
+    <section *ngIf="active">
+      <h2>Text style</h2>
+      <div class="text-grid">
+        <span></span><span class="hint">Colour</span><span class="hint">Size</span>
+        <ng-container *ngFor="let part of textParts">
+          <span class="part">{{ part.label }}</span>
+          <input
+            type="color"
+            [ngModel]="textValue(part.key, 'color', part.color)"
+            (ngModelChange)="setText(part.key, 'color', $event)" />
+          <input
+            type="number"
+            min="8"
+            max="24"
+            [ngModel]="textValue(part.key, 'fontSize', part.size)"
+            (ngModelChange)="setText(part.key, 'fontSize', +$event)" />
+        </ng-container>
+      </div>
+    </section>
+
+    <!-- ---------- layout + behaviour ---------- -->
+    <section>
+      <h2>Layout &amp; behaviour</h2>
+      <label>
+        Flow direction
+        <select [(ngModel)]="layout.direction" (ngModelChange)="rebuild()">
+          <option *ngFor="let d of directions" [value]="d">{{ d }}</option>
+        </select>
+      </label>
+      <label class="slider">
+        Node width <span class="value">{{ layout.nodeWidth }}px</span>
+        <input type="range" min="120" max="260" step="4" [(ngModel)]="layout.nodeWidth" (ngModelChange)="rebuild()" />
+      </label>
+      <label class="slider">
+        Level gap <span class="value">{{ layout.levelGap }}px</span>
+        <input type="range" min="40" max="240" step="4" [(ngModel)]="layout.levelGap" (ngModelChange)="rebuild()" />
+      </label>
+      <label class="slider">
+        Node gap <span class="value">{{ layout.nodeGap }}px</span>
+        <input type="range" min="4" max="48" [(ngModel)]="layout.nodeGap" (ngModelChange)="rebuild()" />
+      </label>
+
+      <label>
+        Selection mode
+        <select [(ngModel)]="selectionMode">
+          <option value="multiple">multiple</option>
+          <option value="single">single</option>
+          <option value="none">none</option>
+        </select>
+      </label>
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="highlightOnHover" /> Highlight path on hover
+      </label>
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="zoomControls" /> Zoom buttons
+      </label>
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="showLegend" (ngModelChange)="rebuild()" /> Show legend
+      </label>
+
+      <p class="hint">
+        Selected:
+        <ng-container *ngIf="selectedIds.length; else none">
+          <code *ngFor="let id of selectedIds" class="chip">{{ id }}</code>
+          <button type="button" class="link" (click)="clearSelection()">clear</button>
+        </ng-container>
+        <ng-template #none>none</ng-template>
+      </p>
+    </section>
+
+    <!-- ---------- export ---------- -->
+    <section>
+      <h2>Export</h2>
+      <p class="hint">Paste this straight into your app as <code>[config]</code>.</p>
+      <textarea readonly rows="10">{{ exported }}</textarea>
+      <button type="button" (click)="copyExport()">{{ copied ? 'Copied' : 'Copy JSON' }}</button>
+    </section>
+  </aside>
+
+  <main class="stage">
+    <kt-dependency-graph
+      [config]="config"
+      [selectionMode]="selectionMode"
+      [highlightOnHover]="highlightOnHover"
+      [zoomControls]="zoomControls"
+      (nodeClick)="onNodeClick($event)"
+      (selectionChange)="onSelectionChange($event)"
+    ></kt-dependency-graph>
+  </main>
+</div>
