@@ -178,6 +178,10 @@ container has no set height, the chart is as tall as its content.
 
 ## Dependency graph (`<kt-dependency-graph>`)
 
+<img width="1408" height="950" alt="image" src="https://github.com/user-attachments/assets/f5873443-83fd-4dd0-9793-882f0e7c5cb6" />
+
+
+
 Draws nodes connected by arrows and lays them out in levels: nodes with no inputs come first,
 and every other node sits one level after its furthest input. The component handles layout,
 hover, selection and zoom. The text and look of every node, edge and badge come from your data.
