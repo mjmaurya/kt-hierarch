@@ -75,6 +75,11 @@ export class KtDependencyGraphComponent implements OnChanges, AfterViewInit, OnD
   @Input() selectionMode: 'none' | 'single' | 'multiple' = 'multiple';
   /** Dim everything not upstream/downstream of the hovered node. */
   @Input() highlightOnHover = true;
+  /**
+   * On hover / focus, show a card with the node's full title, sub-title and custom HTML
+   * (in that order, wrapped instead of truncated). Replaces the browser's native tooltip.
+   */
+  @Input() showHoverText = false;
   /** Drag to pan, wheel / buttons to zoom. Set false to scroll the graph instead. */
   @Input() zoomable = true;
   @Input() zoomControls = true;
@@ -86,6 +91,7 @@ export class KtDependencyGraphComponent implements OnChanges, AfterViewInit, OnD
 
   @ViewChild(KtZoomPanComponent) zoomPan?: KtZoomPanComponent;
   @ViewChildren('nodeEl') private nodeEls!: QueryList<ElementRef<HTMLElement>>;
+  @ViewChild('hoverCardEl') private hoverCardEl?: ElementRef<HTMLElement>;
 
   readonly uid = `kd${nextInstance++}`;
 
@@ -94,12 +100,18 @@ export class KtDependencyGraphComponent implements OnChanges, AfterViewInit, OnD
   related: { up: Set<string>; down: Set<string> } | null = null;
   /** False until every node has a measured height; the canvas stays hidden meanwhile. */
   measured = false;
+  /** The hover card, positioned relative to the host (outside the zoomed content, so it never scales or clips). */
+  hoverCard: { node: KtDependencyGraphNodeView; left: number; top: number } | null = null;
   private hovered: string | null = null;
   private markerIndex = new Map<string, number>();
   private readonly heights = new Map<string, number>();
   private resizeObserver: ResizeObserver | null = null;
 
-  constructor(private readonly zone: NgZone, private readonly cdr: ChangeDetectorRef) {}
+  constructor(
+    private readonly host: ElementRef<HTMLElement>,
+    private readonly zone: NgZone,
+    private readonly cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
@@ -110,6 +122,7 @@ export class KtDependencyGraphComponent implements OnChanges, AfterViewInit, OnD
       if (this.model.warnings.length) console.warn('[kt-dependency-graph]', ...this.model.warnings);
     }
     if (changes.config || changes.highlightOnHover) this.updateRelated();
+    if (changes.config || changes.showHoverText) this.hoverCard = null;
   }
 
   ngAfterViewInit(): void {
@@ -146,6 +159,25 @@ export class KtDependencyGraphComponent implements OnChanges, AfterViewInit, OnD
   setHovered(id: string | null): void {
     this.hovered = id;
     this.updateRelated();
+  }
+
+  onNodeEnter(n: KtDependencyGraphNodeView, event: Event): void {
+    this.setHovered(n.id);
+    if (this.showHoverText) this.showHoverCard(n, event.currentTarget as HTMLElement);
+  }
+
+  onNodeLeave(): void {
+    this.setHovered(null);
+    this.hoverCard = null;
+  }
+
+  /** Panning or zooming moves the node away from the card, so drop the card. */
+  hideHoverCard(): void {
+    this.hoverCard = null;
+  }
+
+  hoverCardId(): string {
+    return `${this.uid}-hover`;
   }
 
   /** One arrowhead marker per distinct edge colour, plus a default one. */
@@ -197,7 +229,38 @@ export class KtDependencyGraphComponent implements OnChanges, AfterViewInit, OnD
     return item.id;
   }
 
+  /**
+   * Renders the card, measures it, then places it below the node — or above when there is
+   * no room below — and keeps it inside the component horizontally.
+   */
+  private showHoverCard(n: KtDependencyGraphNodeView, nodeEl: HTMLElement): void {
+    this.hoverCard = { node: n, left: 0, top: 0 };
+    this.cdr.detectChanges();
+    const card = this.hoverCardEl?.nativeElement;
+    if (!card || !this.hoverCard) return;
+
+    const GAP = 8;
+    const EDGE = 4;
+    const box = this.host.nativeElement.getBoundingClientRect();
+    const r = nodeEl.getBoundingClientRect();
+    const w = card.offsetWidth;
+    const h = card.offsetHeight;
+
+    const nodeTop = r.top - box.top;
+    const nodeBottom = r.bottom - box.top;
+    let top = nodeBottom + GAP;
+    if (top + h > box.height - EDGE && nodeTop - GAP - h >= EDGE) top = nodeTop - GAP - h;
+
+    const centred = r.left - box.left + r.width / 2 - w / 2;
+    const left = Math.max(EDGE, Math.min(centred, box.width - w - EDGE));
+
+    this.hoverCard = { node: n, left, top };
+    // detectChanges() above cleared the dirty flag the event set; mark again so this renders.
+    this.cdr.markForCheck();
+  }
+
   private relayout(): void {
+    this.hoverCard = null;
     const ids = new Set((this.config?.nodes ?? []).map((n) => n.id));
     this.heights.forEach((_, id) => ids.has(id) || this.heights.delete(id));
     this.model = buildModel(this.config, this.heights);

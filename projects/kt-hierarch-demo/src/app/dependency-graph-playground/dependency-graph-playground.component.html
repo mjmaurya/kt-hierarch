@@ -176,6 +176,9 @@
         <input type="checkbox" [(ngModel)]="highlightOnHover" /> Highlight path on hover
       </label>
       <label class="check">
+        <input type="checkbox" [(ngModel)]="showHoverText" /> Show full text on hover
+      </label>
+      <label class="check">
         <input type="checkbox" [(ngModel)]="zoomControls" /> Zoom buttons
       </label>
       <label class="check">
@@ -206,6 +209,7 @@
       [config]="config"
       [selectionMode]="selectionMode"
       [highlightOnHover]="highlightOnHover"
+      [showHoverText]="showHoverText"
       [zoomControls]="zoomControls"
       (nodeClick)="onNodeClick($event)"
       (selectionChange)="onSelectionChange($event)"

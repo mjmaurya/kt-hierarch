@@ -146,6 +146,8 @@ export class KtZoomPanComponent implements AfterViewInit, OnDestroy {
   @Input() wheelZoom = true;
 
   @Output() readonly zoomChange = new EventEmitter<number>();
+  /** Emitted once when a press turns into a drag. */
+  @Output() readonly panStart = new EventEmitter<void>();
 
   @ViewChild('content', { static: true }) private content!: ElementRef<HTMLElement>;
 
@@ -264,6 +266,7 @@ export class KtZoomPanComponent implements AfterViewInit, OnDestroy {
       this.panning = true;
       this.host.nativeElement.setPointerCapture(e.pointerId);
       this.host.nativeElement.classList.add('is-panning');
+      this.zone.run(() => this.panStart.emit());
     }
     this.x = p.originX + dx;
     this.y = p.originY + dy;

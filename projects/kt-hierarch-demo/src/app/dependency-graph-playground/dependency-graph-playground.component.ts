@@ -43,6 +43,7 @@ export class DependencyGraphPlaygroundComponent {
 
   selectionMode: SelectionMode = 'multiple';
   highlightOnHover = true;
+  showHoverText = true;
   showLegend = true;
   zoomControls = true;
 
