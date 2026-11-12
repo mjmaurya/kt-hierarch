@@ -4,6 +4,8 @@
   [minZoom]="minZoom"
   [maxZoom]="maxZoom"
   [showControls]="zoomControls"
+  (panStart)="hideHoverCard()"
+  (zoomChange)="hideHoverCard()"
 >
   <div class="kdg-scroll">
     <!-- hidden until node heights are measured, so the first (estimated) layout never flashes -->
@@ -68,18 +70,19 @@
         [style.left.px]="n.x"
         [style.top.px]="n.y"
         [style.width.px]="n.width"
-        [attr.title]="n.tooltip || null"
+        [attr.title]="showHoverText ? null : n.tooltip || null"
         [attr.aria-label]="n.tooltip || null"
+        [attr.aria-describedby]="hoverCard?.node?.id === n.id ? hoverCardId() : null"
         [attr.aria-pressed]="selectionMode === 'none' ? null : isSelected(n.id)"
         [attr.role]="selectionMode === 'none' ? null : 'button'"
         [attr.tabindex]="selectionMode === 'none' ? null : 0"
         (click)="onNodeClick(n)"
         (keydown.enter)="onKey($event, n)"
         (keydown.space)="onKey($event, n)"
-        (mouseenter)="setHovered(n.id)"
-        (mouseleave)="setHovered(null)"
-        (focus)="setHovered(n.id)"
-        (blur)="setHovered(null)"
+        (mouseenter)="onNodeEnter(n, $event)"
+        (mouseleave)="onNodeLeave()"
+        (focus)="onNodeEnter(n, $event)"
+        (blur)="onNodeLeave()"
       >
         <ng-container *ngIf="nodeTemplate as tpl; else defaultNode">
           <ng-container
@@ -103,6 +106,21 @@
     </div>
   </div>
 </kt-zoom-pan>
+
+<!-- full node text on hover, in the same order as the node: title, sub-title, custom HTML -->
+<div
+  *ngIf="hoverCard as card"
+  #hoverCardEl
+  class="kdg-hover"
+  role="tooltip"
+  [attr.id]="hoverCardId()"
+  [style.left.px]="card.left"
+  [style.top.px]="card.top"
+>
+  <div class="kdg-hover__title">{{ card.node.title }}</div>
+  <div *ngIf="card.node.subTitle" class="kdg-hover__subtitle">{{ card.node.subTitle }}</div>
+  <div *ngIf="card.node.customHtml" class="kdg-hover__html" [innerHTML]="card.node.customHtml"></div>
+</div>
 
 <ul *ngIf="model.legend.length" class="kdg-legend">
   <li *ngFor="let item of model.legend" class="kdg-legend__item">

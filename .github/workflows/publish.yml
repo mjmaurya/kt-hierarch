@@ -2,6 +2,15 @@ name: Publish kt-hierarch to npm
 
 on:
   workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump (major for breaking changes, minor for new features, patch for fixes)'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
 
 concurrency:
   group: publish-npm
@@ -29,11 +38,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Bump patch version
+      - name: Bump version
         id: version
+        env:
+          BUMP: ${{ inputs.bump }}
         run: |
           cd projects/kt-hierarch
-          NEW_VERSION=$(npm version patch --no-git-tag-version)
+          NEW_VERSION=$(npm version "$BUMP" --no-git-tag-version)
           echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build library

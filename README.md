@@ -228,6 +228,7 @@ onNodeClick(node: KtDependencyGraphNodeView) {
 | `config` | `KtDependencyGraphConfig` | | Nodes, edges, layout, legend and the starting selection. See [`config`](#config-1). |
 | `selectionMode` | `'none' \| 'single' \| 'multiple'` | `'multiple'` | How clicks select nodes. `'none'` turns selection off but still emits `nodeClick`. |
 | `highlightOnHover` | `boolean` | `true` | When a node is hovered, fade everything that isn't upstream or downstream of it. |
+| `showHoverText` | `boolean` | `false` | When a node is hovered or focused, show a card with its full title, sub-title and custom HTML. See [Hover text](#hover-text). |
 | `nodeTemplate` | `TemplateRef` | `null` | Your own template for the inside of every node. See [Custom node template](#custom-node-template). |
 | `zoomable` | `boolean` | `true` | Drag to pan and zoom with the wheel or buttons. Set `false` to scroll the graph instead. |
 | `zoomControls` | `boolean` | `true` | Show the zoom buttons. |
@@ -266,7 +267,7 @@ Get the component with `@ViewChild(KtDependencyGraphComponent)` and call `zoomIn
 | `customHtml` | `string \| SafeHtml` | Extra content shown below the sub-title. See [Custom HTML](#custom-html). |
 | `badge` | `KtDependencyGraphBadge` | A small label in one corner of the node. See [Badges](#badges). |
 | `style` | `KtDependencyGraphNodeStyle` | How the node looks. See [Styles](#styles). |
-| `tooltip` | `string` | Hover text. Defaults to the title and sub-title. |
+| `tooltip` | `string` | Browser tooltip and screen-reader label. Defaults to the title and sub-title. The tooltip is not shown when `showHoverText` is on. |
 | `width` | `number` | Width in px for this node. Defaults to `layout.nodeWidth`. |
 | `level` | `number` | Put the node in this level (0 is the first) instead of the one worked out from its inputs. |
 | `order` | `number` | Position within its level. Nodes are otherwise placed next to their inputs. |
@@ -356,6 +357,23 @@ the node some `padding`, or pick another corner.
 `style` attributes. To keep inline styles in HTML you trust, pass it through
 `DomSanitizer.bypassSecurityTrustHtml()` first. Never do that with user input.
 
+### Hover text
+
+Long titles and sub-titles are cut off with "…" inside the node. With `showHoverText`, hovering
+or focusing a node shows a card with the full text, in the same order as the node: title,
+sub-title, then custom HTML.
+
+```html
+<kt-dependency-graph [config]="config" [showHoverText]="true"></kt-dependency-graph>
+```
+
+- **Position:** the card appears below the node, or above it when there's no room below, and
+  stays inside the graph's area. It isn't affected by the zoom level.
+- **Hiding:** the card disappears when the pointer leaves the node, or when you start dragging
+  or zooming.
+- **Tooltip:** the browser's own tooltip is turned off while the card is in use, so they never
+  both show.
+
 ### Selection
 
 Clicking a node selects it (`'single'`) or toggles it (`'multiple'`). Selected nodes get a dark
@@ -439,6 +457,10 @@ kt-dependency-graph {
 | `--kt-dependency-graph-focus` | `#3a6ee6` | Keyboard focus ring. |
 | `--kt-dependency-graph-badge-bg` | `#2f55d4` | Badge background. |
 | `--kt-dependency-graph-badge-text` | `#ffffff` | Badge text. |
+| `--kt-dependency-graph-hover-bg` | `#ffffff` | Hover card background. |
+| `--kt-dependency-graph-hover-border` | `#d0d5dd` | Hover card border. |
+| `--kt-dependency-graph-hover-text` | `#1f2328` | Hover card title and custom HTML. |
+| `--kt-dependency-graph-hover-muted` | `#5b616b` | Hover card sub-title. |
 
 ### Size
 
@@ -483,6 +505,7 @@ To use it on your own content, import `KtZoomPanModule`:
 | Output | Payload | Description |
 | --- | --- | --- |
 | `zoomChange` | `number` | The new zoom factor. |
+| `panStart` | none | Emitted once when a press turns into a drag. |
 
 Methods: `zoomIn()`, `zoomOut()`, `reset()`, `fit()`.
 

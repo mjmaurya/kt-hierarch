@@ -4,6 +4,7 @@
 //   kt-dependency-graph { --kt-dependency-graph-node-bg: #111827; --kt-dependency-graph-edge-color: #60a5fa; }
 
 :host {
+  position: relative; // anchors the hover card
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -146,6 +147,39 @@
 .kdg-badge--bottom-right {
   bottom: 4px;
   right: 4px;
+}
+
+/* ---------- Hover card ---------- */
+
+.kdg-hover {
+  position: absolute;
+  z-index: 10;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(320px, calc(100% - 8px));
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--kt-dependency-graph-hover-text, #1f2328);
+  background: var(--kt-dependency-graph-hover-bg, #ffffff);
+  border: 1px solid var(--kt-dependency-graph-hover-border, #d0d5dd);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.16);
+  overflow-wrap: anywhere;
+  pointer-events: none; // never steals the hover from the node underneath
+}
+
+.kdg-hover__title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kdg-hover__subtitle {
+  color: var(--kt-dependency-graph-hover-muted, #5b616b);
+}
+
+.kdg-hover__html {
+  margin-top: 4px;
 }
 
 /* ---------- Legend ---------- */
